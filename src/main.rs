@@ -90,7 +90,13 @@ fn findbiggestfiles(dirname: &str, cutoff: u64) {
 }
 
 fn main() {
-    if let Some(arg1) = env::args().nth(1) {
-        findbiggestfiles(&arg1, 2);
+    let mut args = env::args();
+    if args.len() > 2 {
+        let _arg0 = args.next().unwrap();
+        let arg1 = args.next().unwrap();
+        let arg2 = args.next().unwrap();
+        findbiggestfiles(&arg1, u64::from_str_radix(&arg2, 10).unwrap());
+    } else {
+        println!("Usage:\nbiggest-files <directory> <minimum-size-in-MB>");
     }
 }
