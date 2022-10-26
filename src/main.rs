@@ -54,6 +54,13 @@ fn findbiggestfiles(dirname: &str, cutoff: u64) {
                             txi.send(findsize(&entry.path())).unwrap();
                         });
                     }
+                    else if m.is_file() {
+                        let txi = tx.clone();
+
+                        thread::spawn(move || {
+                            txi.send(DirAndSize::new(entry.path().to_str().unwrap(), m.len() / 1024 /1024)).unwrap();
+                        });
+                    }
                 }
             }
         }
@@ -69,7 +76,7 @@ fn findbiggestfiles(dirname: &str, cutoff: u64) {
             if lines_printed > 0 {
                 print!("\x1b[{}A\x1b[0J", lines_printed);
             }
-            println!("\x1b[31m||Directory\t|Size in MB||\x1b[0m");
+            println!("\x1b[31m||File/directory\t|Size in MB||\x1b[0m");
             lines_printed = 1;
             for a in &allsizes {
                 println!("|{}\t|{}|", a.name, a.size);
