@@ -1,4 +1,4 @@
-name: Rust
+name: Rustbuild
 
 on:
   workflow_dispatch:
@@ -7,10 +7,8 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
-
+  build-windows:
     runs-on: windows-latest
-
     steps:
     - uses: actions/checkout@v3
     - name: Build
@@ -19,3 +17,24 @@ jobs:
       with:
         name: executable
         path: ${{ github.workspace }}\target\release\biggest-files.exe
+  build-ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build
+      run: cargo build --release --verbose
+    - uses: actions/upload-artifact@v3
+      with:
+        name: executable
+        path: ${{ github.workspace }}/target/release/biggest-files
+  build-macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build
+      run: cargo build --release --verbose
+    - uses: actions/upload-artifact@v3
+      with:
+        name: executable
+        path: ${{ github.workspace }}/target/release/biggest-files
+
