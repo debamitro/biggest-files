@@ -23,6 +23,7 @@ impl DirAndSize {
 
 fn findsize(toplevel: &str, arg1: &str, chan: &Sender<DirAndSize>) {
     let mut size: u64 = 0;
+    let txi = chan.clone();
     if let Ok(itr) = fs::read_dir(arg1) {
         for e in itr {
             if let Ok(entry) = e {
@@ -37,7 +38,6 @@ fn findsize(toplevel: &str, arg1: &str, chan: &Sender<DirAndSize>) {
         }
     }
 
-    let txi = chan.clone();
     let arg1_copy = String::from(toplevel);
     thread::spawn(move || {
         txi.send(DirAndSize::new(&arg1_copy, size / 1024 / 1024))
@@ -74,6 +74,8 @@ fn findbiggestfiles(dirname: &str, cutoff: u64) {
                 }
             }
         }
+
+        drop(tx);
 
         let mut lines_printed: u64 = 0;
         while let Ok(msg) = rx.recv() {
